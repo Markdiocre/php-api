@@ -9,7 +9,7 @@
             $this->pdo = $pdo;
         }
 
-        public function get_all_query($sql){
+        public function exec_query($sql){
             $data = array();
             $errmsg = '';
             $code = 0;
@@ -39,6 +39,16 @@
             $status = array("remarks"=>$remarks, "message"=>$message);
             http_response_code($code);
             return array("status"=>$status, "payload"=>$payload, "timestamp"=>date_create(), "prepared_by"=>"Mark Thaddeus Manuel");
+        }
+
+        public function cud($sql, $arr, $verb, $verb_past){
+            try{
+                $stmt = $this->pdo->prepare($sql);
+                $stmt->execute($arr);
+                return $this->response_payload(null,"success","Successfully $verb_past Data", 200);
+            }catch(\PDOException $e){
+                return $this->response_payload(null,"failed","Failed to $verb data", 400);
+            }
         }
 
     }
